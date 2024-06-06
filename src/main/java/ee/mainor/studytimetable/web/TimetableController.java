@@ -1,5 +1,6 @@
 package ee.mainor.studytimetable.web;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import ee.mainor.studytimetable.dto.TimetableDto;
 import ee.mainor.studytimetable.service.TimetableService;
 import lombok.RequiredArgsConstructor;
@@ -13,15 +14,15 @@ public class TimetableController {
 
     private final TimetableService timetableService;
 
-    @PostMapping("{id}")
-    public ResponseEntity create(@PathVariable Integer id) {
-        return timetableService.create(id);
+    @PostMapping("{userid}")
+    public ResponseEntity create(@PathVariable Integer userid) throws JsonProcessingException {
+        return timetableService.create(userid);
     }
 
 
-    @GetMapping("{id}")
-    public TimetableDto findById(@PathVariable Integer id) {
-        return timetableService.findById(id);
+    @GetMapping("{userid}")
+    public TimetableDto findById(@PathVariable Integer userid) {
+        return timetableService.findById(userid);
     }
 
 }
