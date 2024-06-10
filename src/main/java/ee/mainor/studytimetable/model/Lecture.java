@@ -3,16 +3,31 @@ package ee.mainor.studytimetable.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Lecture {
     @JsonProperty
-    private Integer id;
+    public Integer id;
     @JsonProperty
-    private String title;
+    public String title;
     @JsonProperty
-    private String start;
+    public String start;
     @JsonProperty
-    private String end;
+    public String end;
     @JsonProperty
     private LectureContent sisu;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Lecture lecture = (Lecture) o;
+        return id.equals(lecture.id) && title.equals(lecture.title) && start.equals(lecture.start) && end.equals(lecture.end) && sisu.equals(lecture.sisu);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, start, end, sisu);
+    }
 }

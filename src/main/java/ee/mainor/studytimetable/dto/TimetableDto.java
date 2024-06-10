@@ -2,7 +2,8 @@ package ee.mainor.studytimetable.dto;
 
 import lombok.Data;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 public class TimetableDto {
@@ -10,7 +11,7 @@ public class TimetableDto {
     private Integer id;
     private Integer userid;
     private String timetable;
-    private String time;
+    private LocalDateTime time;
 
 }
 

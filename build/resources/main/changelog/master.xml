@@ -5,5 +5,6 @@
 
     <include file="classpath:changelog/timetable.xml" />
     <include file="classpath:changelog/user.xml" />
+    <include file="classpath:changelog/timetable_diff.xml" />
 
 </databaseChangeLog>

@@ -10,7 +10,7 @@
             id SERIAL PRIMARY KEY,
             userid integer,
             timetable character varying(32000) NOT NULL,
-            time character varying(64) NOT NULL
+            time timestamp NOT NULL
             );
         </sql>
     </changeSet>

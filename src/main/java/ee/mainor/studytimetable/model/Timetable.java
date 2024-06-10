@@ -4,7 +4,8 @@ import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @Table(name = "timetable")
@@ -14,6 +15,6 @@ public class Timetable {
     private Integer id;
     private Integer userid;
     private String timetable;
-    private String time;
+    private LocalDateTime time;
 
 }
