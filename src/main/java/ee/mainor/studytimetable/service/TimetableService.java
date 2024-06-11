@@ -2,10 +2,12 @@ package ee.mainor.studytimetable.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import ee.mainor.studytimetable.dto.CreateTimetableRequest;
+import ee.mainor.studytimetable.dto.TimetableDiffDto;
 import ee.mainor.studytimetable.dto.TimetableDto;
+import ee.mainor.studytimetable.mapper.TimetableDiffMapper;
 import ee.mainor.studytimetable.mapper.TimetableMapper;
 import ee.mainor.studytimetable.model.Lecture;
 import ee.mainor.studytimetable.model.Timetable;
@@ -15,7 +17,6 @@ import ee.mainor.studytimetable.repository.TimetableDiffRepository;
 import ee.mainor.studytimetable.repository.TimetableRepository;
 import ee.mainor.studytimetable.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -23,8 +24,6 @@ import org.springframework.web.client.RestClient;
 
 import java.time.Clock;
 import java.time.LocalDateTime;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
 
@@ -36,9 +35,9 @@ public class TimetableService {
     private final TimetableDiffRepository timetableDiffRepository;
     private final UserRepository userRepository;
 
-    public ResponseEntity create(Integer userid) throws JsonProcessingException {
+    public ResponseEntity create(Integer userid, CreateTimetableRequest period) throws JsonProcessingException {
         Timetable timetable_old = timetableRepository.findByUserid(userid);
-        Timetable timetable_new = GetTimetableForUser(userid);
+        Timetable timetable_new = GetTimetableForUser(userid, period);
         timetableRepository.save(timetable_new);
 
         if (timetable_old != null)
@@ -80,7 +79,7 @@ public class TimetableService {
         return new ResponseEntity(HttpStatus.ALREADY_REPORTED);
     }
 
-    private Timetable GetTimetableForUser(Integer userid) throws JsonProcessingException {
+    private Timetable GetTimetableForUser(Integer userid, CreateTimetableRequest period) throws JsonProcessingException {
         var t = timetableRepository.findByUserid(userid);
 
         if (t == null) {
@@ -90,7 +89,12 @@ public class TimetableService {
 
         RestClient defaultClient = RestClient.create();
         String s = defaultClient.get()
-                .uri("https://ois.eek.ee/student/syllabus/syllabus-json?token=426kbh2f3iqfag9ovuf7btqv9l&student_id=1049277&start=2024-06-07&end=2024-06-09&type=all")
+                .uri("https://ois.eek.ee/student/syllabus/syllabus-json?" +
+                        "token=426kbh2f3iqfag9ovuf7btqv9l&" +
+                        "student_id=1049277&" +
+                        "start=" + period.getStartdate() + "&" +
+                        "end=" + period.getEnddate() + "&" +
+                        "type=all")
                 .retrieve()
                 .body(String.class);
 
@@ -112,7 +116,19 @@ public class TimetableService {
         return timetableRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Timetable not found"));
     }
 
+    private List<TimetableDiff> requireTimetableDiff(Integer id) {
+        var diff = timetableDiffRepository.findByUserid(id);
+        if(diff == null || diff.size() == 0)
+            throw new IllegalArgumentException("Timetable diff not found");
+        return diff;
+    }
+
     private User requireUser(Integer id) {
         return userRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("User not found"));
+    }
+
+    public List<TimetableDiffDto> findDiffById(Integer userid) {
+        List<TimetableDiff> diff = requireTimetableDiff(userid);
+        return TimetableDiffMapper.toDto(diff);
     }
 }

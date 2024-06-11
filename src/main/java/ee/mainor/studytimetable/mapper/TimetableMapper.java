@@ -1,6 +1,5 @@
 package ee.mainor.studytimetable.mapper;
 
-import ee.mainor.studytimetable.dto.CreateBookRequest;
 import ee.mainor.studytimetable.dto.TimetableDto;
 import ee.mainor.studytimetable.model.Timetable;
 
